@@ -1,6 +1,11 @@
 # Github Explorer
 
 <p align="center">
+
+
+<img src="https://user-images.githubusercontent.com/30418565/160385680-b2c4eead-5944-4bee-9bf4-eb3de521d853.png" alt="Lista dos repositorios"/>
+
+
 </p>
 
 </br>
@@ -34,11 +39,11 @@ O Github Explorer é uma aplicação que mostra uma lista de repositórios da Ro
 
 - Clone o repositório
 ```
-git clone https://github.com/BrunoBecoski/Ignite-ReactJS-01-github-explorer.git
+git clone https://github.com/ericlys/ignite_react-js.git
 ```
 - Instale as dependências
 ```
-yarn install
+yarn
 ```
 - Inicie o servidor
 ``` 
