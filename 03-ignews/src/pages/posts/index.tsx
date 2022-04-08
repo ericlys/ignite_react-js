@@ -3,8 +3,20 @@ import Head from 'next/head';
 import { GetStaticProps } from 'next';
 import { getPrismicClient } from '../../services/prismic';
 import Prismic from '@prismicio/client';
+import { RichText } from 'prismic-dom';
 
-export default function Posts() {
+type Post = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  updatedAt: string;
+};
+
+interface PostProps {
+  posts: Post[];
+}
+
+export default function Posts( { posts }: PostProps) {
   return (
     <>
       <Head>
@@ -13,21 +25,13 @@ export default function Posts() {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="#">
-            <time>12 de março de 2021</time>
-            <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit.</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nulla mollitia fugit impedit harum pariatur culpa nostrum inventore voluptates, recusandae illum incidunt rem totam odio hic tempora voluptatibus vero nesciunt!</p>
+         { posts.map( post => (
+            <a key={post.slug} href="#">
+            <time>{post.updatedAt}</time>
+            <strong>{post.title}</strong>
+            <p>{post.excerpt}</p>
           </a>
-          <a href="#">
-            <time>12 de março de 2021</time>
-            <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit.</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nulla mollitia fugit impedit harum pariatur culpa nostrum inventore voluptates, recusandae illum incidunt rem totam odio hic tempora voluptatibus vero nesciunt!</p>
-          </a>
-          <a href="#">
-            <time>12 de março de 2021</time>
-            <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit.</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nulla mollitia fugit impedit harum pariatur culpa nostrum inventore voluptates, recusandae illum incidunt rem totam odio hic tempora voluptatibus vero nesciunt!</p>
-          </a>
+         ))}          
         </div>
       </main>
     </>
@@ -35,18 +39,35 @@ export default function Posts() {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const prismic = getPrismicClient(); 
 
-  const response = await prismic.query([
-    Prismic.predicates.at('document.type', 'post') 
+    interface PrismicResponse {
+      title: string,
+      content: any
+  }
+
+  const prismic = getPrismicClient();
+
+  const response = await prismic.query<PrismicResponse>([
+    Prismic.predicates.at('document.type', 'post')
   ],{
     fetch: ['post.title', 'post.content'],
     pageSize: 100,
   })
 
-  console.log(JSON.stringify(response, null, 2))
+  const posts = response.results.map(post => { 
+    return{
+      slug: post.uid,
+      title: RichText.asText(post.data.title),
+      excerpt: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
+      updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt-BR',{
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      })
+    }
+    });
 
   return {
-    props: {}
+    props: {posts}
   }
 }
