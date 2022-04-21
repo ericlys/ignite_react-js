@@ -61,8 +61,8 @@ export default function CreateUser() {
               <Input
                 name="name"
                 label="Nome completo"
-                {...register("name")}
                 error={formState.errors.name} 
+                {...register("name")}
               />
               <Input
                 name="email"
