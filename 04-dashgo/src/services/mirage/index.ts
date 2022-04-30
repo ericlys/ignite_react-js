@@ -19,7 +19,7 @@ export function makeServer(){
           return `User ${i + 1}`
         },
         email(){
-          return faker.internet.email().toLowerCase;
+          return faker.internet.email().toLowerCase();
         },
         createdAt(){
           return faker.date.recent(10);
@@ -28,7 +28,7 @@ export function makeServer(){
     },
 
     seeds(server){
-      server.createList('user', 200)
+      server.createList('user', 10)
     },
 
     routes() {
